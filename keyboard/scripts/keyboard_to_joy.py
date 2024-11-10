@@ -105,20 +105,26 @@ class KeyboardToJoyNode(Node):
         dt = 1.0 / float(hz)
         self.create_timer(dt, self.main_loop)
 
+        self.publish_event = False
+
     def keydown_callback(self, msg):
         for part in self.axes + self.buttons:
             part.down(msg.code)
+        self.publish_event = True
 
     def keyup_callback(self, msg):
         for part in self.axes + self.buttons:
             part.up(msg.code)
+        self.publish_event = True
 
     def main_loop(self):
-        msg = Joy(
-            axes=[a.get() for a in self.axes], buttons=[b.get() for b in self.buttons]
-        )
-        msg.header.stamp = self.get_clock().now().to_msg()
-        self.joy_pub.publish(msg)
+        if (self.publish_event):
+            msg = Joy(
+                axes=[a.get() for a in self.axes], buttons=[b.get() for b in self.buttons]
+            )
+            msg.header.stamp = self.get_clock().now().to_msg()
+            self.joy_pub.publish(msg)
+            self.publish_event = False
 
 
 def main(args=None):
