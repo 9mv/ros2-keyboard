@@ -21,7 +21,7 @@ public:
     pub_up = this->create_publisher<keyboard_msgs::msg::Key>("keyup", 10);
 
     // Timer to check for keys pressed
-    timer = this->create_wall_timer(20ms, std::bind(&KeyboardNode::timer_callback, this));
+    timer = this->create_wall_timer(10ms, std::bind(&KeyboardNode::timer_callback, this));
 
     if ( !allow_repeat_ ) repeat_delay_=0; // disable
     if (SDL_Init(SDL_INIT_VIDEO) < 0) throw std::runtime_error("Could not init SDL");
